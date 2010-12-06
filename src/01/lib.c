@@ -10,7 +10,7 @@ int putc(unsigned char c)
     return serial_send_byte(SERIAL_DEFAULT_DEVICE, c);
 }
 
-int puts(unsinged char* str){
+int puts(unsigned char* str){
     while(*str){
         putc(*(str++));
     }

@@ -3,9 +3,9 @@
 
 #define SERIAL_SCI_NUM 3
 
-#define H8_3069F_SCI0 ((volatile struct h8_3069f_sci*)0xffffb0);
-#define H8_3069F_SCI1 ((volatile struct h8_3069f_sci*)0xffffb8);
-#define H8_3069F_SCI2 ((volatile struct h8_3069f_sci*)0xffffc0);
+#define H8_3069F_SCI0 ((volatile struct h8_3069f_sci*)0xffffb0)
+#define H8_3069F_SCI1 ((volatile struct h8_3069f_sci*)0xffffb8)
+#define H8_3069F_SCI2 ((volatile struct h8_3069f_sci*)0xffffc0)
 
 struct h8_3069f_sci {
     volatile uint8 smr;
@@ -61,7 +61,7 @@ int serial_init(int index)
     sci->scr = 0;
     sci->smr = 0;
     sci->brr = 64;
-    sci->scr = H8_3069F_SCI_RE | H8_3069F_SCI_SCR_TE;
+    sci->scr = H8_3069F_SCI_SCR_RE | H8_3069F_SCI_SCR_TE;
     sci->ssr = 0;
 
     return 0;
@@ -70,7 +70,7 @@ int serial_init(int index)
 int serial_is_send_enable(int index)
 {
     volatile struct h8_3069f_sci* sci = regs[index].sci;
-    return (sci->srr & H8_3069F_SCI_SSR_TDRE);
+    return (sci->ssr & H8_3069F_SCI_SSR_TDRE);
 }
 
 int serial_send_byte(int index, unsigned char c)

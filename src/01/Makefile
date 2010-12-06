@@ -22,7 +22,7 @@ OBJS   += lib.o serial.o
 
 TARGET  = kzload
 
-CFLAGS  = -Wall -mh -nostdinc -nostdlib -fno-buildin
+CFLAGS  = -Wall -mh -nostdinc -nostdlib -fno-builtin
 #CFLAGS += -mint32
 CFLAGS += -I.
 #CFLAGS += -g

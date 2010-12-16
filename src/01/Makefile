@@ -15,7 +15,11 @@ STRIP   = $(BINDIR)/$(ADDNAME)strip
 
 H8WRITE = ../../tools/h8write/h8write
 
+ifeq ($(OS),Windows_NT)
+H8WRITE_SERDEV = /dev/com11
+else
 H8WRITE_SERDEV = /dev/cu.usbserial
+endif
 
 OBJS    = vector.o startup.o main.o
 OBJS   += lib.o serial.o

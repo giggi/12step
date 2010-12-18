@@ -55,10 +55,19 @@ dump(char* buf, long size)
 }
 
 static void
-wait()
+wait(void)
 {
     volatile long i;
     for(i=0; i<300000; ++i);
+}
+
+static void
+print_usage(void)
+{
+    puts("commands: \n");
+    puts("  help: this command.\n");
+    puts("  load: load a file by XMODEM.\n");
+    puts("  dump: dump memory.\n");
 }
 
 int
@@ -91,6 +100,8 @@ main(void)
             putxval(size, 0);
             puts("\n");
             dump(loadbuf, size);
+        }else if(!strcmp(buf, "help")){
+            print_usage();
         }else{
             puts("unknown.\n");
         }

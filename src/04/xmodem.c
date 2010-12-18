@@ -78,6 +78,7 @@ xmodem_recv(char* buf)
         }else if(c == XMODEM_CAN){
             return -1;
         }else if(c == XMODEM_SOH){
+            ++receiving;
             r = xmodem_read_block(block_number, buf);
             if(r < 0){
                 serial_send_byte(SERIAL_DEFAULT_DEVICE, XMODEM_NAK);

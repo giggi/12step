@@ -23,7 +23,7 @@ xmodem_wait(void)
 
     DBG(xmodem_wait0);
     while(!serial_is_recv_enable(SERIAL_DEFAULT_DEVICE)){
-        if(++cnt >= 200000){
+        if(++cnt >= 2000000){
             cnt = 0;
             DBG(xmodem_wait1);
             serial_send_byte(SERIAL_DEFAULT_DEVICE, XMODEM_NAK);
@@ -75,7 +75,8 @@ xmodem_read_block(unsigned char block_number, char* buf)
 long
 xmodem_recv(char* buf)
 {
-    int r, receiving = 0;
+    int r;
+    volatile int receiving = 0;
     long size = 0;
     unsigned char c, block_number = 1;
 
@@ -100,7 +101,7 @@ xmodem_recv(char* buf)
             return -1;
         }else if(c == XMODEM_SOH){
             DBG(xmodem_recv7);
-            ++receiving;
+            receiving = 1;
             r = xmodem_read_block(block_number, buf);
             if(r < 0){
                 DBG(xmodem_recv8);

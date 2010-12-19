@@ -2,7 +2,7 @@
 #include "serial.h"
 #include "lib.h"
 
-#define __ENABLE_DEBUG__
+//#define __ENABLE_DEBUG__
 #include "debug.h"
 
 int global_data = 0x10;

@@ -19,12 +19,14 @@
 static int
 xmodem_wait(void)
 {
-    long cnt = 0;
+    volatile long cnt = 0;
 
     while(!serial_is_recv_enable(SERIAL_DEFAULT_DEVICE)){
         if(++cnt >= 2000000){
             cnt = 0;
+            DBG(xmodem_wait0);
             serial_send_byte(SERIAL_DEFAULT_DEVICE, XMODEM_NAK);
+            DBG(xmodem_wait1);
         }
     }
     return 0;

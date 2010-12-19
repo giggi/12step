@@ -1,3 +1,7 @@
+/**
+ * xmodem (XMODEM/SUM)
+ */
+
 #include "defines.h"
 #include "serial.h"
 #include "lib.h"
@@ -6,8 +10,8 @@
 //#define __ENABLE_DEBUG__
 #include "debug.h"
 
-#define XMODEM_SOH 0x01
-#define XMODEM_STX 0x02
+#define XMODEM_SOH 0x01 /* if block size is 128B  */
+#define XMODEM_STX 0x02 /* if block size is 1024B */
 #define XMODEM_EOT 0x04
 #define XMODEM_ACK 0x06
 #define XMODEM_NAK 0x15
@@ -101,7 +105,7 @@ xmodem_recv(char* buf)
             return -1;
         }else if(c == XMODEM_SOH){
             DBG(xmodem_recv7);
-            receiving = 1;
+            ++receiving;
             r = xmodem_read_block(block_number, buf);
             if(r < 0){
                 DBG(xmodem_recv8);

@@ -62,7 +62,14 @@
 		0:	No Debug mesages
 		1:	Debug mesages
 */
-#define	DEBUG	0
+#define	DEBUG	1
+
+#if DEBUG == 1
+#define DBG printf("%s[%d]\n", __func__, __LINE__)
+#else
+#define DBG
+#endif
+
 
 /*
 	Buffer sizes
@@ -785,7 +792,9 @@ ReadFile(
 	} while(s < 1);
 	return buf[0] & 0xff;
  }
+
 #else
+
  #include <termios.h>
  struct termios TheTty;
  int TheFd;
@@ -808,11 +817,15 @@ ReadFile(
 	char	buf[2];
 	int	s;
 
+    DBG;
 	do {
+        DBG;
 		if((s = read(TheFd, buf, 1)) == -1) {
 			error_print(FATAL,ERR_READLINE,NULL);
 		}
+        DBG;
 	} while(s < 1);
+    DBG;
 	return (unsigned char)buf[0];
  }
 #endif
@@ -931,9 +944,11 @@ void opencom(char *sPort, int rate) {
 	TheTty.c_cc[VMIN] = 1;
 
 	TheTty.c_cflag |= HUPCL | CLOCAL ;
+    
 	if(tcsetattr(TheFd, TCSANOW, &TheTty ) == -1){
 		error_print(FATAL,ERR_INITLINE,NULL);
 	}
+
 #endif
 }
 
@@ -1490,26 +1505,41 @@ int main(int argc, char **argv) {
 	if(freq == 0) freq = 25;
 	if( !(freq == 20 || freq == 25)) error_print(FATAL,ERR_OPTION,"Speed (-fxx) should be 20 or 25\n");
 
+    DBG;
 	opencom(sPort, 9600);
+    DBG;    
 	if(cpuid > 0x100) {
 
+        DBG;
 		for(i = 0;i < BIT_RATE_SET_MAX_3069;i++) buffer[i] = BIT_SET_CODE;
+        DBG;
 		writecom(buffer, BIT_RATE_SET_MAX_3069);
+        DBG;
 		/*	get& check status	*/
 		s = getbyte();
+        DBG;
 		if ( s == BIT_SET_FIN ){
 			/* Now it seems changed from bit rate set mode to query mode	*/
+            DBG;
 			putbyte(BIT_SET_CHEK);
+            DBG;
 			s = getbyte();
+            DBG;
 			bytecheck(s, BIT_SET_RES_3069);
+            DBG;
 		} else{ if (s != QUERY_ERR_RES ){
 				error_print(FATAL,ERR_SET_QUERYMODE,(char *)buffer);
 			} else {
+                DBG;
 				s = getbyte();
+                DBG;
 				sprintf((char *)buffer,"Error code : %x\n",(int)s);
+                DBG;
 				error_print(WARNING,ERR_ALREADY_QUERY,(char *)buffer);
+                DBG;
 			}
 		}
+        DBG;
 	} else {
 
 		for(i = 0;i < BIT_RATE_SET_MAX;i++) buffer[i] = BIT_SET_CODE;
@@ -1568,22 +1598,37 @@ int main(int argc, char **argv) {
 		fprintf(stderr,"H8/3069F is ");
 		break;
 	}
+    DBG;
 	if(cpuid > 0x100) {
+        DBG;
 		query_device(cpuid, devcode);
+        DBG;
 		select_device(devcode);
+        DBG;
 		query_clock();
+        DBG;
 		select_clock();
+        DBG;
 		query_scale(scale);
+        DBG;
 		query_freq();
+        DBG;
 		set_rate(192, freq * 100);
+        DBG;
 		closecom();
+        DBG;
 		opencom(sPort, 19200);
+        DBG;
 		simple_command(SET_RATE_CK_COM);
+        DBG;
 		query_area(&startrom, &endrom);
+        DBG;
 		pagesize = query_pagesize();
+        DBG;
 		simple_command(SWITCH_TO_ERASE_COM);
 		fprintf(stderr,"ready!  2002/5/20 Yukio Mituiwa.\n");
 		simple_command(SEL_WRITE_FORMAT);
+        DBG;
 	} else {
 		putbyte(0x05); getbyte();
 		putbyte(0x00); getbyte();
@@ -1597,18 +1642,22 @@ int main(int argc, char **argv) {
 			error_print(FATAL,ERR_EEPROM_TRANS,NULL);
 		}
 	}
+    DBG;
 	pagebit = 0;
 	for(i = 1;i < 0x10000;i <<= 1) {
 		if(pagesize <= i) break;
 		pagebit++;
 	}
+    DBG;
 	if((fp = fopen(fileName,"r")) == NULL) {
 		error_print(FATAL,ERR_INPUTFILE,fileName);
 	}
+    DBG;
 	fprintf(stderr, "writing\n");
 	for(i = 0;i <= endrom;i++) rombuf[i] = (char)0xff;
 	for(i = 0;i <= (endrom >> pagebit);i++) enable[i] = 0;
 	fscanf(fp,"%256s",buffer);
+    DBG;
 	while(!feof(fp)) {
 		if(buffer[0] == 'S') {
 			if(buffer[1] == '1') {
@@ -1648,6 +1697,7 @@ int main(int argc, char **argv) {
 		}
 		fscanf(fp,"%256s",buffer);
 	}
+    DBG;
 	fclose(fp);
 	if( debug) printf("Finish to read MOT file. Now all data in buffer.\n");
 	if(cpuid < 0x100) {
@@ -1657,6 +1707,7 @@ int main(int argc, char **argv) {
 			error_print(FATAL,ERR_EEPROM_WRITE,NULL);
 		}
 	}
+    DBG;
 	for(i = 0;i <= (endrom >> pagebit);i++) {
 		if(enable[i] == 1) {
 			if(cpuid > 0x100) {
@@ -1725,6 +1776,7 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+    DBG;
 	if(cpuid > 0x100) {
 		sum = WRITE_128_COM;
 		putbyte(WRITE_128_COM);
@@ -1753,5 +1805,6 @@ int main(int argc, char **argv) {
 	}
 	fprintf(stderr,"\nEEPROM Writing is successed.\n");
 	closecom();
+    DBG;
 	return 0;
 }

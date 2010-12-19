@@ -2,6 +2,9 @@
 #include "serial.h"
 #include "lib.h"
 
+#define __ENABLE_DEBUG__
+#include "debug.h"
+
 int global_data = 0x10;
 int global_bss;
 static int static_data = 0x20;
@@ -88,7 +91,9 @@ main(void)
 
         if(!strcmp(buf, "load")){
             loadbuf = (char*)&buffer_start;
+            puts("buffer_start: ");putxval((unsigned long)loadbuf, 0);puts("\n");
             size = xmodem_recv(loadbuf);
+            DBG(main0);
             wait();
             if(size < 0){
                 puts("\nXMODEM receive error!\n");

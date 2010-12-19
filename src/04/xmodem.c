@@ -24,8 +24,8 @@ xmodem_wait(void)
 
     DBG(xmodem_wait0);
     while(!serial_is_recv_enable(SERIAL_DEFAULT_DEVICE)){
-        if(++my_cnt % 10) puts("my_cnt: ");putxval(my_cnt, 0);puts("\n");
-        if(++cnt >= 2000000){
+        //if(++my_cnt % 10) puts("my_cnt: ");putxval(my_cnt, 0);puts("\n");
+        if(++cnt >= 200000){
             cnt = 0;
             DBG(xmodem_wait1);
             serial_send_byte(SERIAL_DEFAULT_DEVICE, XMODEM_NAK);

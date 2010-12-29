@@ -1,0 +1,10 @@
+#ifndef _H_INTR_INCLUDED_
+#define _H_INTR_INCLUDED_
+
+#define SOFTVEC_TYPE_NUM     (3)
+
+#define SOFTVEC_TYPE_SOFTERR (0)
+#define SOFTVEC_TYPE_SYSCALL (1)
+#define SOFTVEC_TYPE_SERINTR (2)
+
+#endif /* _H_INTR_INCLUDED_ */

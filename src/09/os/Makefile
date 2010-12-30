@@ -29,7 +29,6 @@ CFLAGS += -Os
 CFLAGS += -DKZOS
 
 LFLAGS  = -static -T ld.scr -L.
-LFLAGS += -lgcc
 
 .SUFFIXES: .c .o
 .SUFFIXES: .s .o
@@ -39,8 +38,8 @@ all:			$(TARGET)
 
 $(TARGET):		$(OBJS)
 				$(CC) $(OBJS) -o $(TARGET) $(CFLAGS) $(LFLAGS)
-				cp $(TARGET) $(TARGET).elf
 				$(STRIP) $(TARGET)
+				cp $(TARGET) $(TARGET).elf
 
 .c.o:			$<
 				$(CC) -c $(CFLAGS) $<

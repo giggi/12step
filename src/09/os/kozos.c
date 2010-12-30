@@ -33,6 +33,8 @@ typedef struct _kz_thread {
     } syscall;
 
     kz_context context;
+
+    char pad[] __attribute__((aligned(16)));
 } kz_thread;
 
 static struct {
@@ -139,7 +141,6 @@ thread_run(kz_func_t func, char* name, int priority, int stacksize, int argc, ch
     thp->stack = thread_stack;
 
     sp = (uint32*)thp->stack;
-
     *(--sp) = (uint32)thread_end;
     /* set 0 to I bit and UI bit if priority is 0 to disable interrupt */
     *(--sp) = (uint32)thread_init | ((uint32)(priority?(0):(0xc0)) << 24);
@@ -152,7 +153,6 @@ thread_run(kz_func_t func, char* name, int priority, int stacksize, int argc, ch
     *(--sp) = 0; /* ER1 */
 
     *(--sp) = (uint32)thp; /* ER0 : argv[0] */
-
     thp->context.sp = (uint32)sp;
     
     /** put thread called syscall to ready queue */

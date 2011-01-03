@@ -71,6 +71,7 @@ elf_load_program(struct elf_header* header)
         phdr = (struct elf_program_header*)((char*)header + header->program_header_offset
                                             + header->program_header_size * i);
 
+        /** segment type must be PT_LOAD */
         if(phdr->type != 1) continue;
 
 #if 0
@@ -84,6 +85,7 @@ elf_load_program(struct elf_header* header)
 #endif
 
         memcpy((char*)phdr->physical_addr, (char*)header+phdr->offset, phdr->file_size);
+        /* initialize BSS section */
         memset((char*)phdr->physical_addr+phdr->file_size, 0, phdr->memory_size - phdr->file_size);
     }
 
